@@ -1,14 +1,17 @@
 #!/bin/bash
 #
-# Copyright (c) 2014 The IndexFS Authors. All rights reserved.
+# Copyright (c) 2014-2016 Carnegie Mellon University.
+#
+# All rights reserved.
+#
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 #
 # Please run this script at the indexfs's home directory:
 #   > sbin/stop-cluster.sh
 #
-# Use this script to shutdown indexfs as well as the underlying file
-# system running at the local machine.
+# Use this script to shutdown an indexfs cluster running on
+# a set of machines.
 #
 # Root privilege is neither required nor recommended to run this script.  
 #
@@ -16,7 +19,7 @@
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
 INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
-INDEXFS_CONF_DIR=${INDEXFS_CONF_DIR:-"$INDEXFS_HOME/etc/indexfs-lo"}
+INDEXFS_CONF_DIR=${INDEXFS_CONF_DIR:-"$INDEXFS_HOME/etc/indexfs"}
 
 report_error() {
   echo "Fail to stop indexfs server at $1"
@@ -28,16 +31,15 @@ for srv_addr in \
 do
   INDEXFS_ID=$((${INDEXFS_ID:-"-1"} + 1))
   INDEXFS_RUN=$INDEXFS_ROOT/run/s$INDEXFS_ID
-  env INDEXFS_ID=$INDEXFS_ID \
+  ssh $(echo $srv_addr | cut -d':' -f1) "env \
+      INDEXFS_ID=$INDEXFS_ID \
       INDEXFS_ROOT=$INDEXFS_ROOT \
       INDEXFS_RUN=$INDEXFS_RUN \
-  $INDEXFS_HOME/sbin/stop-idxfs.sh $srv_addr || report_error $srv_addr
+  $INDEXFS_HOME/sbin/stop-idxfs.sh $srv_addr" || report_error $srv_addr
 done
 
-# eliminate any possible running instances
-killall -9 indexfs_server &>/dev/null
-
 # stop backend storage service if necessary
+# note: this only works in stand-alone mode
 INDEXFS_BACKEND=`$INDEXFS_HOME/sbin/idxfs.sh backend`
 if test -z "$INDEXFS_BACKEND"
 then

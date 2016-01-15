@@ -23,18 +23,18 @@ if test -z "$INDEXFS_RUN_TYPE"; then INDEXFS_RUN_TYPE="regular"; fi
 INDEXFS_RUN_PREFIX=${INDEXFS_RUN_PREFIX="`date +%s`"}
 
 # check the location of the build directory
-INDEXFS_BASE=$INDEXFS_HOME
+INDEXFS_BUILD=$INDEXFS_HOME
 
 if test -d $INDEXFS_HOME/build
 then
-  INDEXFS_BASE=$INDEXFS_HOME/build
+  INDEXFS_BUILD=$INDEXFS_HOME/build
 fi
 
 # check our test binary
-if test ! -e $INDEXFS_BASE/io_test/io_driver
+if test ! -e $INDEXFS_BUILD/io_test/io_driver
 then
   echo "Cannot find the test binary -- oops"
-  echo "It is supposed to be found at $INDEXFS_BASE/io_test/io_driver"
+  echo "It is supposed to be found at $INDEXFS_BUILD/io_test/io_driver"
   exit 1
 fi
 
@@ -56,7 +56,7 @@ fi
 
 INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
 INDEXFS_RUN=$INDEXFS_ROOT/run
-INDEXFS_OUTPUT=$INDEXFS_RUN/iotest
+INDEXFS_OUTPUT=$INDEXFS_RUN/tree_test
 INDEXFS_BACKEND=`$INDEXFS_HOME/sbin/idxfs.sh backend`
 
 # prepare test directories
@@ -76,9 +76,19 @@ then
   export CLASSPATH=`$INDEXFS_HOME/sbin/hdfs.sh classpath`
 fi
 
-# run tree test
+# use mpich if possible
+which mpiexec.mpich
+if test $? -eq 0
+then
+  MPIEXEC=mpiexec.mpich
+else
+  MPIEXEC=mpiexec
+fi
+
+# advanced tree test settings
 NUM_CLIENTS=${1-"2"}
-DB_ROOT="$INDEXFS_ROOT/leveldb"
+FILE_ROOT="$INDEXFS_ROOT/_DATA_"
+DB_ROOT="$INDEXFS_ROOT/_META_"
 case $INDEXFS_RUN_TYPE in
   batch-mknod)
     extra_opts="--batch_creates=true"
@@ -96,18 +106,20 @@ case $INDEXFS_RUN_TYPE in
   *)
     ;;
 esac
-mpiexec -prepend-rank -np $NUM_CLIENTS $INDEXFS_BASE/io_test/io_driver \
+
+$MPIEXEC -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \
   --task=tree \
   --dirs=1 \
   --files=8000 \
   --share_dirs \
   --ignore_errors=false \
+  --file_dir=$FILE_ROOT \
   --db_root=$DB_ROOT \
   --configfn=$INDEXFS_CONF_FILE \
   --srvlstfn=$INDEXFS_SERVER_LIST \
   --log_dir=$INDEXFS_OUTPUT \
-  --log_file=$INDEXFS_OUTPUT/latency_histogram \
+  --log_file=$INDEXFS_OUTPUT/perf_report \
   $extra_opts
 
 exit 0

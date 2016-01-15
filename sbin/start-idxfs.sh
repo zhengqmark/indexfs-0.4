@@ -1,6 +1,9 @@
 #!/bin/bash
 #
-# Copyright (c) 2014 The IndexFS Authors. All rights reserved.
+# Copyright (c) 2014-2016 Carnegie Mellon University.
+#
+# All rights reserved.
+#
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 #
@@ -12,8 +15,8 @@
 me=$0
 cmd=${2-"start"}
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
-INDEXFS_BASE=${INDEXFS_BASE:-"$INDEXFS_HOME/build"}
-INDEXFS_CONF_DIR=${INDEXFS_CONF_DIR:-"$INDEXFS_HOME/etc/indexfs-lo"}
+INDEXFS_BUILD=${INDEXFS_BUILD:-"$INDEXFS_HOME/build"}
+INDEXFS_CONF_DIR=${INDEXFS_CONF_DIR:-"$INDEXFS_HOME/etc/indexfs"}
 INDEXFS_BACKEND=`$INDEXFS_HOME/sbin/idxfs.sh backend`
 
 # check indexfs backend
@@ -21,6 +24,30 @@ if test -z "$INDEXFS_BACKEND"
 then
   echo "Cannot determine indexfs backend -- oops"
   exit 1
+fi
+
+# check if we have the required server list
+if test ! -e "$INDEXFS_CONF_DIR/server_list"
+then
+  echo "Cannot find our server list file -- oops"
+  echo "It is supposed to be found at $INDEXFS_CONF_DIR/server_list"
+  exit 1
+else
+  # ensure legacy indexfs clients can work correctly
+  rm -f /tmp/giga_conf
+  ln -fs $INDEXFS_CONF_DIR/server_list /tmp/giga_conf
+fi
+
+# check if we have the required configuration files
+if test ! -e "$INDEXFS_CONF_DIR/indexfs_conf"
+then
+  echo "Cannot find our indexfs config file -- oops"
+  echo "It is supposed to be found at $INDEXFS_CONF_DIR/indexfs_conf"
+  exit 1
+else
+  # ensure legacy indexfs clients can work correctly
+  rm -f /tmp/idxfs_conf
+  ln -fs $INDEXFS_CONF_DIR/indexfs_conf /tmp/idxfs_conf
 fi
 
 INDEXFS_ID=${INDEXFS_ID:-"0"}
@@ -53,7 +80,7 @@ case "$cmd" in
     ;;
 esac
 
-# prepare runtime env if necessary
+# prepare java runtime env if necessary
 if test x"$INDEXFS_BACKEND" = x"__HDFS__"
 then
   LD_PATH=`$INDEXFS_HOME/sbin/hdfs.sh ldpath`
@@ -66,7 +93,7 @@ then
   export CLASSPATH=`$INDEXFS_HOME/sbin/hdfs.sh classpath`
 fi
 
-# prepare server directories
+# switch log directories, retaining old logs
 if test -d "$INDEXFS_LOGS"
 then
   rm -rf $INDEXFS_OLD_LOGS
@@ -79,10 +106,11 @@ srv_addr=${1-"`hostname -s`"}
 echo "Starting indexfs server $INDEXFS_ID at $srv_addr, logging to $INDEXFS_LOGS ..."
 
 # start indexfs server
-nohup $INDEXFS_BASE/indexfs_server \
+nohup $INDEXFS_BUILD/indexfs_server \
     --srvid="$INDEXFS_ID" \
     --log_dir="$INDEXFS_LOGS" \
-    --db_root="$INDEXFS_ROOT/leveldb" \
+    --file_dir="$INDEXFS_ROOT/_DATA_" \
+    --db_root="$INDEXFS_ROOT/_META_" \
     --configfn="$INDEXFS_CONF_DIR/indexfs_conf" \
     --srvlstfn="$INDEXFS_CONF_DIR/server_list" \
   1>$INDEXFS_LOGS/indexfs_server.STDOUT 2>$INDEXFS_LOGS/indexfs_server.STDERR </dev/null &

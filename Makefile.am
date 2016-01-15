@@ -54,12 +54,11 @@ EXTRA_DIST =
 
 EXTRA_DIST += bootstrap.sh
 EXTRA_DIST += AUTHORS LICENSE README.md
-EXTRA_DIST += sbin/idxfs.sh sbin/hdfs.sh
-EXTRA_DIST += sbin/start-all.sh sbin/stop-all.sh
+EXTRA_DIST += sbin/idxfs.sh sbin/hdfs.sh sbin/rados.sh
+EXTRA_DIST += sbin/start-cluster.sh sbin/stop-cluster.sh
 EXTRA_DIST += sbin/start-idxfs.sh sbin/stop-idxfs.sh
-EXTRA_DIST += sbin/tree-test.sh sbin/mount-fuse.sh
-EXTRA_DIST += etc/indexfs-standalone etc/indexfs-distributed
-EXTRA_DIST += etc/hdfs-standalone
+EXTRA_DIST += sbin/tree-test.sh
+EXTRA_DIST += etc/indexfs etc/hdfs-lo etc/rados-lo
 
 ## -------------------------------------------------------------------------
 ## Additional Makefile Actions

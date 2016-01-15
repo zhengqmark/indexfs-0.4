@@ -27,10 +27,10 @@ INDEXFS INSTALLATION GUIDE
 SYSTEM PREREQUISITES
 --------------------
 
-IndexFS depends on `gflags`, `glog`, and `thrift`. In order to build
-IndexFS from its source, you will also need a C++ building system
-such as `GUN` including `gcc`, `g++`, `make`, `autoconf`, `automake`,
-and `libtool`.
+IndexFS depends on `gflags-2.0`, `glog-0.3.3+`, and `thrift-0.9.1+`.
+In order to build IndexFS from its source, you will also need a C++
+building system such as `GUN` including `gcc`, `g++`, `make`,
+`autoconf`, `automake`, and `libtool`.
 
 In addition, some benchmarks that IndexFS uses to evaluate system
 performance are build with `MPI` -- at least one implementation of MPI
@@ -46,20 +46,11 @@ and install these required IndexFS dependencies.
 ##### INSTALL SYSTEM PACKAGES
 
 * **Ubuntu**
-
-        apt-get install gcc g++ make flex bison
-        apt-get install autoconf automake libtool pkg-config
-        apt-get install zlib1g-dev libsnappy-dev
-        apt-get install libboost-all-dev libevent-dev libssl-dev
-        apt-get install pdsh libfuse-dev libopenmpi-dev
-
-* **Opensuse**
-
-        zypper install gcc gcc-c++ make flex bison
-        zypper install autoconf automake libtool pkg-config
-        zypper install zlib-devel snappy-devel
-        zypper install boost-devel libevent-devel libopenssl-devel
-        zypper install psmisc pdsh fuse-devel openmpi openmpi-devel
+        sudo apt-get install gcc g++ make flex bison
+        sudo apt-get install autoconf automake libtool pkg-config
+        sudo apt-get install zlib1g-dev libsnappy-dev
+        sudo apt-get install libboost-all-dev libevent-dev libssl-dev
+        sudo apt-get install libfuse-dev libmpich-dev mpich pdsh
 
 ##### Build & Install Depends
 
