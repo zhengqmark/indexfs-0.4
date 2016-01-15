@@ -34,7 +34,7 @@ building system such as `GUN` including `gcc`, `g++`, `make`,
 
 In addition, some benchmarks that IndexFS uses to evaluate system
 performance are build with `MPI` -- at least one implementation of MPI
-(`OpenMPI`) should be present for these benchmarks to compile and run.
+(such as `MPICH`) should be present for these benchmarks to run.
 
 To help ease IndexFS deployment and avoid dependency issues, IndexFS
 provides gflags, glog, and thrift source packages along with its src
@@ -46,6 +46,7 @@ and install these required IndexFS dependencies.
 ##### INSTALL SYSTEM PACKAGES
 
 * **Ubuntu**
+
         sudo apt-get install gcc g++ make flex bison
         sudo apt-get install autoconf automake libtool pkg-config
         sudo apt-get install zlib1g-dev libsnappy-dev
