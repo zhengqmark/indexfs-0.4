@@ -113,9 +113,10 @@ So everything is in one box.
 
 In the above scripts, IndexFS server will be started as a daemon
 running in the background. It's pid will be remembered at
-**/tmp/indexfs/metadata_server.pid**.
+**/tmp/indexfs/run/s0/indexfs_server.pid.0**.
 
 A simple MPI-based test will be performed against IndexFS in terms of
 its metadata path. The test will fork 2 client processes to
-collectively create and stat 1600 files under 1 single shared
-directory. This test is expected to conclude in less than 1 second.
+collectively create and stat 8000 files under a single shared
+directory. This test is expected to conclude within 1 second.
+

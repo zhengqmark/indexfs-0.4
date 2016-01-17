@@ -7,7 +7,7 @@
 ## -------------------------------------------------------------------
 
 AC_PREREQ([2.68])
-AC_INIT([indexfs], [0.4.0])
+AC_INIT([indexfs], [0.4.1])
 AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 AM_PROG_AR
