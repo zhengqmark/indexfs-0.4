@@ -1,6 +1,9 @@
 #!/bin/bash
 #
-# Copyright (c) 2014 The IndexFS Authors. All rights reserved.
+# Copyright (c) 2014-2016 Carnegie Mellon University.
+#
+# All rights reserved.
+#
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 #
@@ -11,7 +14,8 @@
 # Root privilege is neither required nor recommended to run this script.
 #
 # MPI is required to run this script:
-#   > mpirun -version
+#   > mpirun -version             or more specifically
+#   > mpirun.mpich -version
 #
 
 me=$0
@@ -77,7 +81,7 @@ then
 fi
 
 # use mpich if possible
-which mpiexec.mpich
+which mpiexec.mpich &>/dev/null
 if test $? -eq 0
 then
   MPIEXEC=mpiexec.mpich
@@ -106,6 +110,8 @@ case $INDEXFS_RUN_TYPE in
   *)
     ;;
 esac
+
+set -x
 
 $MPIEXEC -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \

@@ -27,8 +27,14 @@ FS_OPT=""                    # (A) Build IndexFS upon POSIX
 # MORE_OPT4="-DLEVELDB_VERSION_EDIT_DEBUG"
 OPT="$OPT $MORE_OPT1 $MORE_OPT2 $MORE_OPT3 $MORE_OPT4 -DIDXFS_ENABLE_COMPRESSION"
 
+which mpicc.mpich &>/dev/null
+if test $? -eq 0
+then
+  MPI_OPT="MPICC=mpicc.mpich MPICXX=mpicxx.mpich"
+fi
+
 mkdir -p build && cd build || exit 1
-../configure CFLAGS="${OPT}" CXXFLAGS="${OPT}" ${FS_OPT} || exit 1
-make -j3 --no-print-directory || exit 1
+../configure CFLAGS="${OPT}" CXXFLAGS="${OPT}" ${MPI_OPT} ${FS_OPT} || exit 1
+make -j8 --no-print-directory || exit 1
 
 exit 0
