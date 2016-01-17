@@ -83,8 +83,11 @@ noinst_HEADERS += port/atomic_pointer.h
 # noinst_HEADERS += db/column_db.h
 # noinst_HEADERS += db/data_cache.h
 # noinst_HEADERS += db/membuf.h
+
 noinst_HEADERS += util/monitor.h
 noinst_HEADERS += util/socket.h
+noinst_HEADERS += util/testharness.h
+noinst_HEADERS += util/testutil.h
 
 ## -------------------------------------------------------------------------
 ## libleveldb
