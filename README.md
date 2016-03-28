@@ -79,7 +79,7 @@ automatically for you.
 
 * **To build IndexFS**:
   
-        ./bootstrap.sh
+        autoreconf -ifv && bash bootstrap.sh
 
 NB: you don't have to install IndexFS into your system. Our scripts
 will not assume IndexFS binaries to be accessible from your system path.
