@@ -27,7 +27,8 @@ INDEXFS INSTALLATION GUIDE
 SYSTEM PREREQUISITES
 --------------------
 
-IndexFS depends on `gflags-2.0`, `glog-0.3.3+`, and `thrift-0.9.1+`.
+IndexFS depends on `gflags-2.1.2+`, `glog-0.3.4+`, and `thrift-0.9.3+`.
+They can be downloaded from https://www.assembla.com/spaces/deltafs/documents.
 In order to build IndexFS from its source, you will also need a C++
 building system such as `GUN` including `gcc`, `g++`, `make`,
 `autoconf`, `automake`, and `libtool`.
@@ -35,11 +36,6 @@ building system such as `GUN` including `gcc`, `g++`, `make`,
 In addition, some benchmarks that IndexFS uses to evaluate system
 performance are build with `MPI` -- at least one implementation of MPI
 (such as `MPICH`) should be present for these benchmarks to run.
-
-To help ease IndexFS deployment and avoid dependency issues, IndexFS
-provides gflags, glog, and thrift source packages along with its src
-code. System administrators may directly use these packages to build
-and install these required IndexFS dependencies.
 
 #### STEP-BY-STEP INSTRUCTIONS
 
@@ -62,14 +58,15 @@ Use GNU standard building process to build and install `gflags`,
 
         ./configure && make && sudo make install
 
-NB: thrift's automake scripts have several known bugs, which will
-cause both make and make install to fail. However, those errors are
-not vital in terms of building and installation. Just ignore them
-and life is still good.
-
 * **To build thrift**:
 
-        ./configure || make || sudo make install || exit 0
+        ./configure --without-qt4 --without-qt5 --without-c_glib \
+                    --without-csharp --without-java --without-erlang \
+                    --without-nodejs --without-lua --without-python \
+                    --without-perl --without-php --without-php_extension  \
+                    --without-ruby --without-haskell --without-go \
+                    --without-haxe --without-d --enable-tests=no --enable-tutorial=no
+        make && sudo make install
 
 BUILD INDEXFS FROM SOURCE
 -------------------------
